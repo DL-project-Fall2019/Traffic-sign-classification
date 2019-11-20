@@ -1,6 +1,7 @@
 *
 
 !src/
+!data/
 
 !.gitignore
 !LICENSE
