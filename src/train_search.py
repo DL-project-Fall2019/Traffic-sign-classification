@@ -12,7 +12,8 @@ import torch.utils
 import torch.nn.functional as F
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
-
+from PIL import Image
+from torch.utils.data import Dataset, TensorDataset
 from torch.autograd import Variable
 from src.model_search import Network
 from src.architect import Architect
@@ -92,6 +93,26 @@ class_name = "RedRoundSign"
 TRAFFIC_SIGNS_CLASSES = len(classes[class_name]["signs_classes"])
 ####################################################################################################
 
+class CustomTensorDataset(Dataset):
+
+    def __init__(self, tensors, transform=None):
+        assert all(tensors[0].size(0) == tensor.size(0) for tensor in tensors)
+        self.tensors = tensors
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x = self.tensors[0][index]
+
+        if self.transform:
+            x = self.transform(x)
+
+        y = self.tensors[1][index]
+
+        return x, y
+
+    def __len__(self):
+        return self.tensors[0].size(0)
+
 
 def main():
     if not torch.cuda.is_available():
@@ -147,6 +168,18 @@ def main():
     x_val = np.rollaxis(x_val, 3, 1).astype(np.float32)
     x_train, y_train, x_val, y_val = [torch.from_numpy(a) for a in [x_train, y_train, x_val, y_val]]
     train_data = torch.utils.data.TensorDataset(x_train, y_train)
+
+    transform_train = transforms.Compose([
+    	transforms.Lambda(Image.fromarray),
+    transforms.Pad(padding=5, padding_mode="edge"),
+    transforms.RandomAffine(degrees=5, translate=(0.1, 0.1), scale=(0.9, 1.1), shear=3),
+    transforms.CenterCrop(size=im_size[1:]),
+    transforms.ColorJitter(brightness=0.2, contrast=0.25, saturation=0.2, hue=0.01),
+    transforms.ToTensor(),
+    ])
+
+    train_dataset = CustomTensorDataset(tensors=(x_train, y_train),transform=transform_train)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=16)
     # train_transform, valid_transform = utils._data_transforms_cifar10(args)
     # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
     ####################################################################################################
