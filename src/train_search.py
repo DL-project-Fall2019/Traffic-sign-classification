@@ -133,19 +133,19 @@ def main():
     mapping = {c: i for i, c in enumerate(out_classes)}
     mapping_id_to_name = {i: c for c, i in mapping.items()}
 
-    x_train, y_train, x_test, y_test = get_data_for_master_class(class_name=class_name,
-                                                                 mapping=mapping,
-                                                                 mapping_id_to_name=mapping_id_to_name,
-                                                                 rotation_and_flips=rotation_and_flips,
-                                                                 data_dir=args.data,
-                                                                 merge_sign_classes=merge_sign_classes,
-                                                                 h_symmetry_classes=h_symmetry_classes,
-                                                                 image_size=(32, 32),
-                                                                 ignore_npz=False,
-                                                                 out_classes=out_classes)
+    x_train, y_train, x_val, y_val = get_data_for_master_class(class_name=class_name,
+                                                               mapping=mapping,
+                                                               mapping_id_to_name=mapping_id_to_name,
+                                                               rotation_and_flips=rotation_and_flips,
+                                                               data_dir=args.data,
+                                                               merge_sign_classes=merge_sign_classes,
+                                                               h_symmetry_classes=h_symmetry_classes,
+                                                               image_size=(32, 32),
+                                                               ignore_npz=False,
+                                                               out_classes=out_classes)
     x_train = np.rollaxis(x_train, 3, 1).astype(np.float32)
-    x_test = np.rollaxis(x_test, 3, 1).astype(np.float32)
-    x_train, y_train, x_test, y_test = [torch.from_numpy(a) for a in [x_train, y_train, x_test, y_test]]
+    x_val = np.rollaxis(x_val, 3, 1).astype(np.float32)
+    x_train, y_train, x_val, y_val = [torch.from_numpy(a) for a in [x_train, y_train, x_val, y_val]]
     train_data = torch.utils.data.TensorDataset(x_train, y_train)
     # train_transform, valid_transform = utils._data_transforms_cifar10(args)
     # train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)

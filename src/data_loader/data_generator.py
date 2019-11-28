@@ -18,7 +18,7 @@ def load_img(image_path, target_size):
 
 
 def to_categorical(data: np.ndarray, class_count: int):
-    ret = np.zeros(data.shape + (class_count,), dtype=np.float32)
+    ret = np.zeros(data.shape + (class_count,), dtype=np.int)
     ret[data] = 1
     return ret
 
