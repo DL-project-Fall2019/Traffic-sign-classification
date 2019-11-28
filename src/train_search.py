@@ -10,6 +10,7 @@ import argparse
 import torch.nn as nn
 import torch.utils
 import torch.nn.functional as F
+from torchvision import transforms
 import torchvision.datasets as dset
 import torch.backends.cudnn as cudnn
 from PIL import Image
