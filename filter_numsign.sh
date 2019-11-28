@@ -1,4 +1,4 @@
-#~/bin/bash!
+#!/bin/bash
 # Created by Yufeng Yang 11/24/2019
 # Bash Script for filtering the classes that contains pictures less than fivei and merge same class together
 # Run this script at data/../
