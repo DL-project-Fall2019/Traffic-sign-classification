@@ -17,7 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-from data_generator import SignDataLoader
+from src.data_loader.data_generator import SignDataLoader, get_data_for_master_class
 
 classes = {
     # TODO: Add signs from belgium? change the class used?
@@ -73,48 +73,6 @@ def plot_history(history, base_name=""):
     plt.legend(['Train', 'Validation'], loc='upper left')
     plt.savefig(base_name + "loss.png")
     plt.clf()
-
-
-def get_data_for_master_class(class_name: str, mapping, mapping_id_to_name, rotation_and_flips, data_dir: str,
-                              merge_sign_classes, h_symmetry_classes, image_size, ignore_npz: bool, out_classes):
-    data_file_path = "{0}/{0}.npz".format(class_name)
-    if os.path.isfile(data_file_path) and not ignore_npz:
-        savez = np.load(data_file_path)
-        x_train = savez["x_train"]
-        y_train = savez["y_train"]
-        x_test = savez["x_test"]
-        y_test = savez["y_test"]
-    else:
-        data_loader = SignDataLoader(path_images_dir=data_dir,
-                                     classes_to_detect=out_classes,
-                                     images_size=image_size,
-                                     mapping=mapping,
-                                     classes_flip_and_rotation=rotation_and_flips,
-                                     symmetric_classes=h_symmetry_classes,
-                                     train_test_split=0.2,
-                                     classes_merge=merge_sign_classes)
-        (x_train, y_train), (x_test, y_test) = data_loader.load_data()
-        with open("{0}/{0}_class_counts.json".format(class_name), 'w') as count_json:
-            train_names, train_counts = np.unique(y_train, return_counts=True)
-            test_names, test_counts = np.unique(y_test, return_counts=True)
-            counts = {n: {"train": 0, "test": 0} for n in mapping.keys()}
-            for c, count in zip(train_names, train_counts):
-                c_name = mapping_id_to_name[c]
-                counts[c_name]["train"] = int(count)
-            for c, count in zip(test_names, test_counts):
-                c_name = mapping_id_to_name[c]
-                counts[c_name]["test"] = int(count)
-            json.dump(obj=counts, fp=count_json, indent=4)
-        y_train = to_categorical(y_train, len(out_classes))
-        y_test = to_categorical(y_test, len(out_classes))
-        np.savez_compressed(data_file_path, x_train=x_train, x_test=x_test, y_train=y_train, y_test=y_test,
-                            out_classes=out_classes)
-    print(x_train.shape[0], 'train samples')
-    print(x_test.shape[0], 'test samples')
-    with open("{0}/{0}_mapping.json".format(class_name), 'w') as json_mapping:
-        json.dump(mapping, json_mapping, indent=4)
-
-    return x_train, y_train, x_test, y_test
 
 
 def main():
