@@ -1,4 +1,4 @@
-#~/bin/bash!
+#!/bin/bash
 # Created by Yufeng Yang 11/24/2019
 # Bash Script for filtering the classes that contains pictures less than fivei and merge same class together
 # Run this script at data/../
@@ -23,6 +23,8 @@ cd ../tt100
 ls > ../tt100_name.txt
 cd ..
 # now at data/
+rm -f filter_belgium.txt
+rm -f filter_tt100.txt
 for class in $(cat belgium_name.txt); do
 	num=$(ls belgium/${class}/ | wc -l)
 	if [ $num -ge 5 ]; then
