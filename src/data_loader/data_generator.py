@@ -133,8 +133,8 @@ def get_data_for_master_class(class_name: str, mapping, mapping_id_to_name, rota
                 c_name = mapping_id_to_name[c]
                 counts[c_name]["test"] = int(count)
             json.dump(obj=counts, fp=count_json, indent=4)
-        y_train = to_categorical(y_train, len(out_classes))
-        y_test = to_categorical(y_test, len(out_classes))
+        # y_train = to_categorical(y_train, len(out_classes))
+        # y_test = to_categorical(y_test, len(out_classes))
         np.savez_compressed(data_file_path, x_train=x_train, x_test=x_test, y_train=y_train, y_test=y_test,
                             out_classes=out_classes)
     print(x_train.shape[0], 'train samples')
